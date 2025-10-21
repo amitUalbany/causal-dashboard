@@ -8,6 +8,7 @@ Created on Sun Oct 12 00:03:24 2025
 import streamlit as st
 from causal_tool import DataHandler, CausalGraphBuilder, CausalModelManager  # your modules
 import pandas as pd
+import networkx as nx
 
 
 st.title("Causal Inference Dashboard")
@@ -41,6 +42,9 @@ if uploaded_file:
     # Step 2: Graph
     graph_builder = CausalGraphBuilder()
     graph_nx, graph_string = graph_builder.define_dag("1" if choice_graph=="Manual DAG" else "2", df) 
+    
+    # Convert networkx graph to DOT format string
+    graph_dot = nx.nx_pydot.to_pydot(graph_nx).to_string()
     # graph_nx, graph_string = graph_builder.define_dag("2", df)  # choice 1 or 2
     
     # Streamlit visualization
@@ -61,7 +65,7 @@ if uploaded_file:
     if uploaded_file and st.session_state.model_manager is None:
         treatment = [c for c in df.columns if "occupation" in c][1]
         outcome = [c for c in df.columns if "income" in c][1]
-        st.session_state.model_manager = CausalModelManager(df, treatment, outcome, graph_nx)
+        st.session_state.model_manager = CausalModelManager(df, treatment, outcome, graph_dot)
     
     model_manager = st.session_state.model_manager
     
