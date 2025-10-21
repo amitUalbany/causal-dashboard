@@ -1,0 +1,8 @@
+strict digraph {
+education;
+occupation;
+income;
+education -> occupation;
+education -> income;
+occupation -> income;
+}
